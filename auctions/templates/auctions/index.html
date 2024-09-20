@@ -1,7 +1,14 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
+<h2>Active Listings</h2>
 
-    TODO
+<ul class="listings_small">
+    {% for listing in listings %}
+    Item: {{listing.title}} <a class="listing_link" href="{% url 'listing' id=listing.id %}">Link!</a> <br>
+    Description: {{listing.description}} <br>
+    Price: {{listing.price}} <br>
+    Photo: {{listing.photo}} <br>
+    {% endfor %}
+</ul>
 {% endblock %}
