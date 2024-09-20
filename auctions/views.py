@@ -67,17 +67,17 @@ def register(request):
         return render(request, "auctions/register.html")
 
 
-def listing():
-    pass
+def listing(request):
+    return render(request, "auctions/listing.html")
 
 
-def categories():
-    pass
+def categories(request):
+    return render(request, "auctions/categories.html")
 
 
-def watchlist():
-    pass
+def watchlist(request):
+    return render(request, "auctions/watchlist.html")
 
 
-def new_listing():
-    pass
+def new_listing(request):
+    return render(request, "auctions/new_listing.html")

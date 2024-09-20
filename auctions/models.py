@@ -9,6 +9,21 @@ class User(AbstractUser):
 class Categories(models.Model):
     category_name = models.CharField(max_length=24)
 
+    def __str__(self):
+        return f"{self.category_name}"
+
+
+class Bids(models.Model):
+    bid = models.DecimalField(default=0, decimal_places=2, max_digits=8)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, blank=True, related_name="user_bid"
+    )
+
+    def __str__(self):
+        listing = self.bid_price.first()
+        listing_title = listing.title
+        return f"{self.bid} by {self.user} for {listing_title}"
+
 
 class Listings(models.Model):
     # Note to self: Django automatically makes a primary key called id
@@ -38,12 +53,8 @@ class Listings(models.Model):
         User, blank=True, null=True, related_name="watching"
     )
 
-
-class Bids(models.Model):
-    bid = models.DecimalField(default=0, decimal_places=2)
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, blank=True, related_name="user_bid"
-    )
+    def __str__(self):
+        return f"{self.title}"
 
 
 class Comments(models.Model):
@@ -54,3 +65,6 @@ class Comments(models.Model):
     where = models.ForeignKey(
         Listings, on_delete=models.CASCADE, related_name="listing_comments"
     )
+
+    def __str__(self):
+        return f"Comment by {self.who} on {self.where}"
