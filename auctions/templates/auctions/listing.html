@@ -1,7 +1,64 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
+<div class="main_listing">
+    <div class="listing_title">
+        <h2>{{listing.title}}</h2>
+    </div>
+    <div class="listing_photo">
+        <img src="{{listing.photo}}" height="200px" alt="{{listing.title}}">
+    </div>
+    <div class="listing_rhs">
+        {% if user.is_authenticated and user == listing.seller %}
+        <button>Close listing</button>
+        {% endif %}
+        <div class="listing_price">
+            £ {{listing.price.bid}}
+        </div>
+        <div class="listing_details">
+            <h4>Description</h4> <br>
+            {{listing.description}}
+        </div>
+    </div>
 
-    TODO
+
+    {% if user.is_authenticated %}
+    <button> Bid</button>
+    <button>Add to watchlist!</button>
+    {% endif %}
+
+    <div class="comments_section">
+        <h2> Comments </h2>
+
+        {% if user.is_authenticated %}
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div>
+                <label>Add comments</label>
+                <input type="text" placeholder="Add Comment Here">
+                <button type="submit">Post</button>
+            </div>
+        </form>
+        {% endif %}
+
+        {% if comments %}
+        <ul>
+            {% for comment in comments %}
+            <li>
+                {{ comment.what }} <br>
+                Posted by {{ comment.who }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No comments</p>
+        {% endif %}
+    </div>
+
+
+</div>
+
+- A button to close the auction
+If signed in and the user has won the auction:
+- A message congratulating them for winning the auction
 {% endblock %}

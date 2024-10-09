@@ -68,16 +68,34 @@ def register(request):
         return render(request, "auctions/register.html")
 
 
-def listing(request, id):
-    listing = Listings.objects.filter(id=id)
-    return render(request, "auctions/listing.html")
+def listing(request, listing_id):
+    try:
+        listing = Listings.objects.get(pk=listing_id)
+    except Listings.DoesNotExist:
+        return HttpResponseRedirect(reverse("index"))
+    is_watchlist = request.user in listing.watchlist.all()
+    comments = Comments.objects.filter(where=listing)
+    is_seller = request.user.username == listing.seller.username
+    return render(
+        request,
+        "auctions/listing.html",
+        {
+            "listing": listing,
+            "is_watchlist": is_watchlist,
+            "comments": comments,
+            "is_seller": is_seller,
+        },
+    )
 
 
 def categories(request):
-    return render(request, "auctions/categories.html")
+    categories = Categories.objects.all()
+    return render(request, "auctions/categories.html", {"categories": categories})
 
 
 def watchlist(request):
+    # Add something to specify the user here
+    # Import the watchlist of that user
     return render(request, "auctions/watchlist.html")
 
 
