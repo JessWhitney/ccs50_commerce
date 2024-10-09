@@ -5,9 +5,13 @@
 
 <ul class="listings_small">
     {% for listing in listings %}
-    Item: {{listing.title}} <a class="listing_link" href="{% url 'listing' listing_id=listing.id %}">Link!</a> <br>
-    Description: {{listing.description}} <br>
-    Photo: {{listing.photo}} <br>
+    <div class="main_page_listing">
+
+        <a class="listing_link" href="{% url 'listing' listing_id=listing.id %}">{{listing.title}}</a> <br>
+        Description: {{listing.description}} <br>
+        <img src="{{listing.photo}}" height="100px"> <br>
+    </div>
     {% endfor %}
 </ul>
+
 {% endblock %}
