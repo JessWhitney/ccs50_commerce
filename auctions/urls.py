@@ -11,5 +11,6 @@ urlpatterns = [
     path("categories", views.categories, name="categories"),
     path("watchlist", views.watchlist, name="watchlist"),
     path("new_listing", views.new_listing, name="new_listing"),
+    path("my_profile", views.user_profile, name="user_profile")
     # Bids? Specific categories
 ]
