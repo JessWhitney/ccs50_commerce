@@ -3,8 +3,31 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django import forms
 
 from .models import User, Categories, Bids, Listings, Comments
+
+
+# Include a form here to create a new listing
+class CreateListingForm(forms.ModelForm):
+    """A form for creating a new auction listing with options for:
+    - Title
+    - Description
+    - Image (optional)
+    - Starting bid
+    - Category (optional)
+    """
+    title = forms.CharField(label="Title", max_length=64, required=True)
+    description = forms.CharField(label="Description", widget=forms.Textarea, required=True)
+    photo = forms.URLField(label="Image URL", required=False)
+    starting_bid = forms.DecimalField(decimal_places=2, max_digits=8)
+    category = forms.ChoiceField(choices=[(category.id, category.category_name) for category in Categories.objects.all()],
+        required=False,
+        label="Category"
+    )
+    class Meta:
+        model = Listings
+        fields = ["title", "description", "photo", "starting_bid", "category"]
 
 
 def index(request):
@@ -100,4 +123,34 @@ def watchlist(request):
 
 
 def new_listing(request):
-    return render(request, "auctions/new_listing.html")
+    if request.method=='POST':
+        form = CreateListingForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            description = form.cleaned_data['description']
+            photo = form.cleaned_data['photo']
+            starting_bid = form.cleaned_data['starting_bid']
+            category = form.cleaned_data['category']
+            category_instance = None
+            if category:
+                try:
+                    category_instance = Categories.objects.get(pk=category)
+                except Categories.DoesNotExist:
+                    form.add_error('category', "The selected category does not exist.")
+                    return render(request, "auctions/new_listing.html", {"form": form})
+
+            listing = Listings(
+                title = title,
+                description = description,
+                price = starting_bid,
+                photo = photo,
+                category = category_instance,
+                seller = User.objects.get(pk=request.user.id)
+            )
+            listing.save()
+            return HttpResponseRedirect(reverse('listing', args=[listing.id]))
+        else:
+            return render(request, "auctions/new_listing.html", {"form": form})
+
+    # For GET request
+    return render(request, "auctions/new_listing.html", {"form": CreateListingForm()})
