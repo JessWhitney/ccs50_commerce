@@ -1,9 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django import forms
+from django.contrib.auth.decorators import login_required
 
 from .models import User, Categories, Bids, Listings, Comments
 
@@ -115,13 +116,13 @@ def categories(request):
     categories = Categories.objects.all()
     return render(request, "auctions/categories.html", {"categories": categories})
 
-
+@login_required
 def watchlist(request):
     # Add something to specify the user here
     # Import the watchlist of that user
     return render(request, "auctions/watchlist.html")
 
-
+@login_required
 def new_listing(request):
     if request.method=='POST':
         form = CreateListingForm(request.POST)
@@ -154,3 +155,15 @@ def new_listing(request):
 
     # For GET request
     return render(request, "auctions/new_listing.html", {"form": CreateListingForm()})
+
+@login_required
+def add_to_watchlist(request, listing_id):
+    listing = get_object_or_404(Listings, pk=listing_id)
+    listing.watchlist.add(request.user)
+    return HttpResponseRedirect(reverse('listing', args=[listing.id]))
+
+@login_required
+def remove_from_watchlist(request, listing_id):
+    listing = get_object_or_404(Listings, pk=listing_id)
+    listing.watchlist.remove(request.user)
+    return HttpResponseRedirect(reverse('listing', args=[listing.id]))
