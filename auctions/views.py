@@ -3,33 +3,10 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
-from django import forms
 from django.contrib.auth.decorators import login_required
 
 from .models import User, Categories, Bids, Listings, Comments
-
-
-# Include a form here to create a new listing
-class CreateListingForm(forms.ModelForm):
-    """A form for creating a new auction listing with options for:
-    - Title
-    - Description
-    - Image (optional)
-    - Starting bid
-    - Category (optional)
-    """
-    title = forms.CharField(label="Title", max_length=64, required=True)
-    description = forms.CharField(label="Description", widget=forms.Textarea, required=True)
-    photo = forms.URLField(label="Image URL", required=False)
-    starting_bid = forms.DecimalField(decimal_places=2, max_digits=8)
-    category = forms.ChoiceField(choices=[(category.id, category.category_name) for category in Categories.objects.all()],
-        required=False,
-        label="Category"
-    )
-    class Meta:
-        model = Listings
-        fields = ["title", "description", "photo", "starting_bid", "category"]
-
+from .forms import CreateListingForm
 
 def index(request):
     active_listings = Listings.objects.filter(is_active=True)
@@ -167,3 +144,8 @@ def remove_from_watchlist(request, listing_id):
     listing = get_object_or_404(Listings, pk=listing_id)
     listing.watchlist.remove(request.user)
     return HttpResponseRedirect(reverse('listing', args=[listing.id]))
+
+@login_required
+def user_profile(request):
+    """ A page to see everything associated with that user e.g. listings, watchlist etc."""
+    pass
