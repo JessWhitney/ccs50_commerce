@@ -5,8 +5,8 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
-from .models import User, Categories, Bids, Listings, Comments
 from .forms import CreateListingForm
+from .models import User, Categories, Bids, Listings, Comments
 
 def index(request):
     active_listings = Listings.objects.filter(is_active=True)
@@ -74,8 +74,8 @@ def listing(request, listing_id):
         listing = Listings.objects.get(pk=listing_id)
     except Listings.DoesNotExist:
         return HttpResponseRedirect(reverse("index"))
-    is_watchlist = request.user in listing.watchlist.all()
-    comments = Comments.objects.filter(where=listing)
+    is_watchlist = request.user.is_authenticated and (request.user in listing.watchlist.all())
+    comments = Comments.objects.filter(listing=listing)
     is_seller = request.user.username == listing.seller.username
     return render(
         request,
@@ -111,12 +111,7 @@ def new_listing(request):
             category = form.cleaned_data['category']
             category_instance = None
             if category:
-                try:
-                    category_instance = Categories.objects.get(pk=category)
-                except Categories.DoesNotExist:
-                    form.add_error('category', "The selected category does not exist.")
-                    return render(request, "auctions/new_listing.html", {"form": form})
-
+                category_instance = Categories.objects.get(category_name=category)
             listing = Listings(
                 title = title,
                 description = description,
