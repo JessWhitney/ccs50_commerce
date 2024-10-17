@@ -13,7 +13,7 @@
         <button>Close listing</button>
         {% endif %}
         <div class="listing_price">
-            £ {{listing.price.bid}}
+            £ {{listing.price}}
         </div>
         <div class="listing_details">
             <h4>Description</h4> <br>
@@ -22,9 +22,9 @@
     </div>
 
 
-    {% if user.is_authenticated %}
-    <button> Bid</button>
-    <button>Add to watchlist!</button>
+    {% if user.is_authenticated and user.id != listing.seller.id %}
+    <button>Bid</button>
+    <button type="button" onclick="">Add to watchlist!</button>
     {% endif %}
 
     <div class="comments_section">
@@ -45,8 +45,8 @@
         <ul>
             {% for comment in comments %}
             <li>
-                {{ comment.what }} <br>
-                Posted by {{ comment.who }}
+                {{ comment.content }} <br>
+                Posted by {{ comment.user }} on {{ comment.publication_dat }}
             </li>
             {% endfor %}
         </ul>
@@ -58,7 +58,4 @@
 
 </div>
 
-- A button to close the auction
-If signed in and the user has won the auction:
-- A message congratulating them for winning the auction
 {% endblock %}
