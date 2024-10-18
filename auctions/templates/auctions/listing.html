@@ -1,61 +1,87 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-<div class="main_listing">
-    <div class="listing_title">
-        <h2>{{listing.title}}</h2>
-    </div>
-    <div class="listing_photo">
-        <img src="{{listing.photo}}" height="200px" alt="{{listing.title}}">
-    </div>
-    <div class="listing_rhs">
-        {% if user.is_authenticated and user == listing.seller %}
-        <button>Close listing</button>
-        {% endif %}
-        <div class="listing_price">
-            £ {{listing.price}}
-        </div>
-        <div class="listing_details">
-            <h4>Description</h4> <br>
-            {{listing.description}}
-        </div>
-    </div>
-
-
-    {% if user.is_authenticated and user.id != listing.seller.id %}
-    <button>Bid</button>
-    <button type="button" onclick="">Add to watchlist!</button>
-    {% endif %}
-
-    <div class="comments_section">
-        <h2> Comments </h2>
-
-        {% if user.is_authenticated %}
-        <form action="" method="POST">
-            {% csrf_token %}
-            <div>
-                <label>Add comments</label>
-                <input type="text" placeholder="Add Comment Here">
-                <button type="submit">Post</button>
+<div class="container col-md-12">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="mb-4">
+                <h2>{{listing.title}}</h2>
             </div>
+            <div class="mb-4">
+                <img src="{{listing.photo}}" alt="{{listing.title}}" class="img-fluid rounded">
+            </div>            
+        </div>
+        <div class="col-md-7">
+            <div class="mb-4">
+                <h4>Description</h4>
+                <p>{{listing.description}}</p>
+            </div>
+            <h3>£ {{listing.price}}</h3>
+
+            <div class="text-muted">
+                <small>Published: {{listing.publication_date}}</small>
+            </div>
+            <div class="mb-4">
+                {% if user.is_authenticated and user == listing.seller %}
+                    <form action="{% url 'closed_listing' listing.id %} method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">End Auction</button> 
+                    </form>
+                {% endif %}
+            </div>
+            {% if user.is_authenticated and user.id != listing.seller.id %}
+            <form action="{% url 'bid' listing.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Bid</button>
+            </form>
+            {% endif %}
+
+            {% if user.is_authenticated and user.id != listing.seller.id %}
+            <div class="mb-4">
+                {% if listing in user.watchlist_items.all %}
+                    <form action="{% url 'remove_from_watchlist' listing.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Remove from Watchlist</button>
+                    </form>
+                {% else %}
+                    <form action="{% url 'add_to_watchlist' listing.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Add to Watchlist</button>
+                    </form>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h2> Comments </h2>
+        </div>
+        {% if user.is_authenticated %}
+        <form action="{% url 'add_comment' listing.id %}" method="POST">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+                <label for="comment">Add comments</label>
+                <textarea name="content" id="comment" class="form-control" placeholder="Add Comment Here" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Post</button>
         </form>
         {% endif %}
-
-        {% if comments %}
-        <ul>
-            {% for comment in comments %}
-            <li>
-                {{ comment.content }} <br>
-                Posted by {{ comment.user }} on {{ comment.publication_dat }}
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p>No comments</p>
-        {% endif %}
+        <div class="mt-4">
+            {% if comments %}
+            <ul class="list-group">
+                {% for comment in comments %}
+                <li class="list-group-item">
+                    <p class="mb-1">{{ comment.content }} </p>
+                    <small class="text-muted">Posted by {{ comment.user }} on {{ comment.publication_date }}</small>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-muted">No comments</p>
+            {% endif %}
+        </div>
     </div>
-
-
 </div>
 
 {% endblock %}

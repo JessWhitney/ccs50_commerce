@@ -144,3 +144,12 @@ def remove_from_watchlist(request, listing_id):
 def user_profile(request):
     """ A page to see everything associated with that user e.g. listings, watchlist etc."""
     pass
+
+def closed_listing(request):
+    pass
+
+def bid(request):
+    pass
+
+def add_comment(request):
+    pass
