@@ -1,7 +1,47 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-<h2>Categories</h2>
+<h1>{{message}}</h1>
+<div class="container col-md-12">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="mb-4">
+                <h2>{{listing.title}}</h2>
+            </div>
+            <div class="mb-4">
+                <img src="{{listing.photo}}" alt="{{listing.title}}" class="img-fluid rounded">
+            </div>            
+        </div>
+        <div class="col-md-7">
+            <div class="mb-4">
+                <h4>Description</h4>
+                <p>{{listing.description}}</p>
+            </div>
+            <h3>£ {{listing.price}}</h3>
 
-TODO
+            <div class="text-muted">
+                <small>Published: {{listing.publication_date}}</small>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h2> Comments </h2>
+        </div>
+        <div class="mt-4">
+            {% if comments %}
+            <ul class="list-group">
+                {% for comment in comments %}
+                <li class="list-group-item">
+                    <p class="mb-1">{{ comment.content }} </p>
+                    <small class="text-muted">Posted by {{ comment.user }} on {{ comment.publication_date }}</small>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-muted">No comments</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}
