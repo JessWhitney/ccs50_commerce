@@ -145,7 +145,7 @@ def remove_from_watchlist(request, listing_id):
 @login_required
 def user_profile(request):
     """ A page to see everything associated with that user e.g. listings, watchlist etc."""
-    pass
+    return render(request, "auctions/user_profile.html")
 
 def closed_listing(request, listing_id):
     """Page that appears after seller closes listing or listing ends naturally."""
@@ -155,8 +155,11 @@ def closed_listing(request, listing_id):
         top_bid = listing.bids.order_by('-bid_amount').first()
         if top_bid:
             listing.owner = top_bid.bidder
+            message = "This auction is over, the item was sold to the highest bidder."
+        else:
+            message = "This auction was closed by the seller."
         listing.save()
-        return render(request, "auctions/closed_listing.html", {"listing": listing, "top_bid": top_bid})
+        return render(request, "auctions/closed_listing.html", {"listing": listing, "top_bid": top_bid, "message": message})
     return HttpResponseRedirect(reverse("listing", args=[listing.id]))
 
 
