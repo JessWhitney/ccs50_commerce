@@ -97,9 +97,9 @@ def categories(request):
 
 @login_required
 def watchlist(request):
-    # Add something to specify the user here
-    # Import the watchlist of that user
-    return render(request, "auctions/watchlist.html")
+    user = request.user
+    watchlist_items = user.watchlist_items.all()
+    return render(request, "auctions/watchlist.html", {"user": user, "watchlist_items":watchlist_items})
 
 @login_required
 def new_listing(request):
@@ -167,6 +167,7 @@ def bid(request, listing_id):
     listing = get_object_or_404(Listings, pk=listing_id)
     if not listing.is_active:
         return HttpResponseRedirect(reverse("listing", args=[listing_id]))
+
 
 def add_comment(request):
     listing = get_object_or_404(Listings, pk=listing_id)
