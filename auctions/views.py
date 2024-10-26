@@ -74,9 +74,11 @@ def listing(request, listing_id):
         listing = Listings.objects.get(pk=listing_id)
     except Listings.DoesNotExist:
         return HttpResponseRedirect(reverse("index"))
+    if not listing.is_active:
+        return render(request, "auctions/closed_listing.html", {"listing":listing})
     is_watchlist = request.user.is_authenticated and (request.user in listing.watchlist.all())
     comments = Comments.objects.filter(listing=listing)
-    is_seller = request.user.username == listing.seller.username
+    is_owner = request.user.username == listing.owner.username
     return render(
         request,
         "auctions/listing.html",
@@ -84,7 +86,7 @@ def listing(request, listing_id):
             "listing": listing,
             "is_watchlist": is_watchlist,
             "comments": comments,
-            "is_seller": is_seller,
+            "is_owner": is_owner,
         },
     )
 
@@ -118,7 +120,7 @@ def new_listing(request):
                 price = starting_bid,
                 photo = photo,
                 category = category_instance,
-                seller = User.objects.get(pk=request.user.id)
+                owner = User.objects.get(pk=request.user.id)
             )
             listing.save()
             return HttpResponseRedirect(reverse('listing', args=[listing.id]))
@@ -145,11 +147,25 @@ def user_profile(request):
     """ A page to see everything associated with that user e.g. listings, watchlist etc."""
     pass
 
-def closed_listing(request):
-    pass
+def closed_listing(request, listing_id):
+    """Page that appears after seller closes listing or listing ends naturally."""
+    listing = get_object_or_404(Listings, pk=listing_id)
+    if request.method=="POST":
+        listing.is_active = False
+        top_bid = listing.bids.order_by('-bid_amount').first()
+        if top_bid:
+            listing.owner = top_bid.bidder
+        listing.save()
+        return render(request, "auctions/closed_listing.html", {"listing": listing, "top_bid": top_bid})
+    return HttpResponseRedirect(reverse("listing", args=[listing.id]))
 
-def bid(request):
-    pass
+
+def bid(request, listing_id):
+    listing = get_object_or_404(Listings, pk=listing_id)
+    if not listing.is_active:
+        return HttpResponseRedirect(reverse("listing", args=[listing_id]))
 
 def add_comment(request):
-    pass
+    listing = get_object_or_404(Listings, pk=listing_id)
+    if not listing.is_active:
+        return HttpResponseRedirect(reverse("listing", args=[listing_id]))

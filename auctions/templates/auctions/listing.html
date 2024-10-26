@@ -22,21 +22,21 @@
                 <small>Published: {{listing.publication_date}}</small>
             </div>
             <div class="mb-4">
-                {% if user.is_authenticated and user == listing.seller %}
-                    <form action="{% url 'closed_listing' listing.id %} method="POST">
+                {% if user.is_authenticated and user == listing.owner %}
+                    <form action="{% url 'closed_listing' listing_id=listing.id %}" method="POST">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger">End Auction</button> 
                     </form>
                 {% endif %}
             </div>
-            {% if user.is_authenticated and user.id != listing.seller.id %}
+            {% if user.is_authenticated and user.id != listing.owner.id %}
             <form action="{% url 'bid' listing.id %}" method="POST">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-primary">Bid</button>
             </form>
             {% endif %}
 
-            {% if user.is_authenticated and user.id != listing.seller.id %}
+            {% if user.is_authenticated and user.id != listing.owner.id %}
             <div class="mb-4">
                 {% if listing in user.watchlist_items.all %}
                     <form action="{% url 'remove_from_watchlist' listing.id %}" method="POST">

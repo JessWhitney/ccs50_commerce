@@ -18,7 +18,7 @@ class Listings(models.Model):
     Model with the overall information for each auction listing:
     - Title
     - Description
-    - Seller
+    - Owner - either seller or new owner
     - Current bid value
     - Listing category
     - Photo (optional)
@@ -38,8 +38,8 @@ class Listings(models.Model):
         related_name="listings",
     )
     is_active = models.BooleanField(default=True)
-    seller = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="seller", blank=True, null=True
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="owner", blank=True, null=True
     )
     watchlist = models.ManyToManyField(
         User, blank=True, related_name="watchlist_items"
@@ -51,7 +51,7 @@ class Listings(models.Model):
         verbose_name_plural = "listings"
 
     def __str__(self):
-        return f"Title: {self.title} by {self.seller}"
+        return f"Title: {self.title} by {self.owner}"
 
 
 class Bids(models.Model):
