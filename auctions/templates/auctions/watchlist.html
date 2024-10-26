@@ -21,7 +21,7 @@
                     <div class="text-muted">£ {{listing.price}}</div>
                     <div class="text-muted">Published: {{listing.publication_date}}</div>
                     <a href="{% url 'listing' listing_id=listing.id %}">View Listing</a>
-                    <form action="{% url 'remove_from_watchlist' listing_id=listing.id}" method="POST">
+                    <form action="{% url 'remove_from_watchlist' listing.id %}?next=watchlist" method="POST">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger">Remove from Watchlist</button>
                     </form>
