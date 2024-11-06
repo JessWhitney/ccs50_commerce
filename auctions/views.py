@@ -7,10 +7,12 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import CreateListingForm
 from .models import User, Categories, Bids, Listings, Comments
+import datetime
 
 def index(request):
     active_listings = Listings.objects.filter(is_active=True)
-    return render(request, "auctions/index.html", {"listings": active_listings})
+    categories = Categories.objects.all()
+    return render(request, "auctions/index.html", {"listings": active_listings, "categories":categories})
 
 
 def login_view(request):
@@ -140,7 +142,12 @@ def add_to_watchlist(request, listing_id):
 def remove_from_watchlist(request, listing_id):
     listing = get_object_or_404(Listings, pk=listing_id)
     listing.watchlist.remove(request.user)
-    return HttpResponseRedirect(reverse('listing', args=[listing.id]))
+    # Could either be removing from the watchlist, or the listing page
+    next_page = request.GET.get("next")
+    if next_page == "watchlist":
+        return HttpResponseRedirect(reverse("watchlist"))
+    return HttpResponseRedirect(reverse("listing", args=[listing.id]))
+
 
 @login_required
 def user_profile(request):
@@ -164,12 +171,21 @@ def closed_listing(request, listing_id):
 
 
 def bid(request, listing_id):
+    """When people submit bids on listings."""
+    new_bid = request.POST['up_bid']
     listing = get_object_or_404(Listings, pk=listing_id)
+    
     if not listing.is_active:
         return HttpResponseRedirect(reverse("listing", args=[listing_id]))
 
 
-def add_comment(request):
-    listing = get_object_or_404(Listings, pk=listing_id)
-    if not listing.is_active:
-        return HttpResponseRedirect(reverse("listing", args=[listing_id]))
+def add_comment(request, listing_id):
+    if request.method == "POST":
+        listing = get_object_or_404(Listings, pk=listing_id)
+        if listing.is_active:
+            comment_instance = request.POST["content"]
+            comment = Comments(user = request.user, content = comment_instance, listing = listing, publication_date = datetime.datetime.now().time())
+            comment.save()
+    return HttpResponseRedirect(reverse("listing", args=[listing.id]))
+    
+    

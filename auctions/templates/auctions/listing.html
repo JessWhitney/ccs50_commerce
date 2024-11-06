@@ -25,7 +25,7 @@
             </div>
             <div class="mb-4">
                 {% if user.is_authenticated and user == listing.owner %}
-                    <form action="{% url 'closed_listing' listing_id=listing.id %}" method="POST">
+                    <form action="{% url 'closed_listing' listing.id %}" method="POST">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger">End Auction</button> 
                     </form>
@@ -34,7 +34,11 @@
             {% if user.is_authenticated and user.id != listing.owner.id %}
             <form action="{% url 'bid' listing.id %}" method="POST">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-primary">Bid</button>
+                <div class="form-group">
+                    <label for="price">Bid</label>
+                    <input id="up_bid" min="0" type="number" name="new_bid" placeholder="new bid">
+                    <button type="submit" class="btn btn-primary">Submit Bid</button>
+                </div>
             </form>
             {% endif %}
 
@@ -64,7 +68,7 @@
             {% csrf_token %}
             <div class="form-group mb-3">
                 <label for="comment">Add comments</label>
-                <textarea name="content" id="comment" class="form-control" placeholder="Add Comment Here" rows="3" required></textarea>
+                <textarea name="content" id="content" class="form-control" placeholder="Add Comment Here" rows="3" required></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Post</button>
         </form>
