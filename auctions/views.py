@@ -100,7 +100,7 @@ def categories(request):
 @login_required
 def watchlist(request):
     user = request.user
-    watchlist_items = user.watchlist_items.all()
+    watchlist_items = user.watchlist_items.filter(is_active=True)
     return render(request, "auctions/watchlist.html", {"user": user, "watchlist_items":watchlist_items})
 
 @login_required
@@ -157,6 +157,7 @@ def user_profile(request):
 def closed_listing(request, listing_id):
     """Page that appears after seller closes listing or listing ends naturally."""
     listing = get_object_or_404(Listings, pk=listing_id)
+    comments = Comments.objects.filter(listing=listing)
     if request.method=="POST":
         listing.is_active = False
         top_bid = listing.bids.order_by('-bid_amount').first()
@@ -166,8 +167,9 @@ def closed_listing(request, listing_id):
         else:
             message = "This auction was closed by the seller."
         listing.save()
-        return render(request, "auctions/closed_listing.html", {"listing": listing, "top_bid": top_bid, "message": message})
-    return HttpResponseRedirect(reverse("listing", args=[listing.id]))
+        return render(request, "auctions/closed_listing.html", {"listing": listing, "message": message})
+    is_owner = request.user == listing.owner
+    return render(request, "auctions/closed_listing.html", {"listing": listing, "is_owner": is_owner, "comments": comments})
 
 
 def bid(request, listing_id):
