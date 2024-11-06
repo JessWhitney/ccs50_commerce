@@ -17,6 +17,8 @@
             <div class="mb-4">
                 <h4>Description</h4>
                 <p>{{listing.description}}</p>
+                <div class="text-muted">
+                    <small>Category: <a href="{% url 'category' category_name=listing.category %}"> {{listing.category}}</a></small>
             </div>
             <h3>£ {{listing.price}}</h3>
 

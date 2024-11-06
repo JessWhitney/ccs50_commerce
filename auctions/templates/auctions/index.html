@@ -18,16 +18,26 @@
                 {% endfor %}
             </div>
         </div>
-        <div class="col-md-7">
-            <div class="mb-4">
+        <!-- <div class="col-md-7 mb-4">
                 <h4>Categories</h4>
                 {% for category in categories %}
-                <div class="card h-100">
-                    {{category}}
+                    <div class="card category-card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ category.category_name }}</h5>
+                            {% if category.active_listings %}
+                                <ul>
+                                    {% for listing in category.active_listings %}
+                                        <li>{{ listing.title }} - £{{ listing.price }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p>No active listings in this category.</p>
+                            {% endif %}
+                            <a href="{% url 'categories'  %}">View Category</a>
+                    </div>
                 </div>
                 {% endfor %}
-            </div>
-        </div>
+        </div> -->
     </div>
 </div>
 

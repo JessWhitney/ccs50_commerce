@@ -1,0 +1,20 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="container col-md-12">
+    <h2>{{ category.category_name }}</h2>
+    <div class="col-md-5">
+        {% for listing in listings %}
+        <div class="main_page_listing">
+            <a class="listing_link" href="{% url 'listing' listing_id=listing.id %}">{{listing.title}}</a> <br>
+            Description: {{listing.description}} <br>
+            <img src="{{listing.photo}}" height="100px"> <br>
+            Current price: £{{listing.price}}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+{% endblock %}

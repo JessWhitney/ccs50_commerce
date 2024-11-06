@@ -12,6 +12,8 @@ from .models import User, Categories, Bids, Listings, Comments
 def index(request):
     active_listings = Listings.objects.filter(is_active=True)
     categories = Categories.objects.all()
+    for category in categories:
+        category.active_listings = category.listings.filter(is_active=True)
     return render(request, "auctions/index.html", {"listings": active_listings, "categories":categories})
 
 
@@ -95,7 +97,14 @@ def listing(request, listing_id):
 
 def categories(request):
     categories = Categories.objects.all()
+    for category in categories:
+        category.active_listings = category.listings.filter(is_active=True)
     return render(request, "auctions/categories.html", {"categories": categories})
+
+def category(request, category_name):
+    category = get_object_or_404(Categories, category_name=category_name)
+    listings = category.listings.filter(is_active=True)
+    return render(request, "auctions/category.html", {"category": category, "listings": listings})
 
 @login_required
 def watchlist(request):
