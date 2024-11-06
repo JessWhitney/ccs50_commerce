@@ -1,3 +1,105 @@
 body {
     padding: 10px;
 }
+
+/* Index page */
+.main_page_listing {
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    transition: transform 0.3s ease;
+}
+
+.card-title, .listing_link {
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.card-title {
+    font-size: 1.2rem;
+}
+
+.card-title:hover, 
+.listing_link:hover{
+    text-decoration: none;
+}
+
+
+.main_page_listing img {
+    border-radius: 5px; 
+    margin-bottom: 10px; 
+}
+
+.main_page_listing p {
+    margin-bottom: 10px;
+}
+
+h2 {
+    margin-bottom: 30px; 
+    font-size: 2rem;
+    padding: 15px;
+}
+
+/* Category page */
+.container {
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.row {
+    margin: 0;
+}
+
+.card {
+    background-color: #f9f9f9;
+    padding: 5px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease; 
+    height: 100%;
+}
+
+.card:hover, .main_page_listing:hover {
+    transform: translateY(-5px); 
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.card-body ul {
+    list-style-type: none;
+    padding-left: 0; 
+}
+
+.card-body ul li {
+    margin-top: 10px; 
+}
+
+.card-body p {
+    margin-top: 10px;
+}
+
+/* Listing page */
+img.img-fluid {
+    border-radius: 10px; 
+    max-width: 100%;
+    margin-bottom: 20px;
+}
+
+.col-md-7, .col-md-5 {
+    padding: 20px; 
+}
+
+.col-md-7 .mb-4 p {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 10px; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    margin-bottom: 10px; 
+}
+
+.list-group-item {
+    padding: 15px;
+}
