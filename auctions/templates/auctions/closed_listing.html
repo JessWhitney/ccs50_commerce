@@ -15,6 +15,11 @@
         </div>
         <div class="col-md-7">
             <div class="mb-4">
+                {% if is_owner %}
+                <div class="alert alert-success" role="alert">
+                    <h4>You own this item!</h4>
+                </div>
+                {% endif %}
                 <h4>Description</h4>
                 <p>{{listing.description}}</p>
             </div>
