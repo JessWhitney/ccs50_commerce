@@ -31,12 +31,21 @@
                     </form>
                 {% endif %}
             </div>
+            {% if messages %}
+                <div class="container mt-3">
+                    {% for message in messages %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
             {% if user.is_authenticated and user.id != listing.owner.id %}
             <form action="{% url 'bid' listing.id %}" method="POST">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="price">Bid</label>
-                    <input id="up_bid" min="0" type="number" name="new_bid" placeholder="new bid">
+                    <input id="up_bid" min="0.01" max="999999.99" step="0.01" type="number" name="up_bid" placeholder="new bid">
                     <button type="submit" class="btn btn-primary">Submit Bid</button>
                 </div>
             </form>

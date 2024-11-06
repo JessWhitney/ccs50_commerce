@@ -4,10 +4,10 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib.messages import error
 
 from .forms import CreateListingForm
 from .models import User, Categories, Bids, Listings, Comments
-import datetime
 
 def index(request):
     active_listings = Listings.objects.filter(is_active=True)
@@ -172,11 +172,18 @@ def closed_listing(request, listing_id):
 
 def bid(request, listing_id):
     """When people submit bids on listings."""
-    new_bid = request.POST['up_bid']
-    listing = get_object_or_404(Listings, pk=listing_id)
-    
-    if not listing.is_active:
-        return HttpResponseRedirect(reverse("listing", args=[listing_id]))
+    if request.method == "POST":
+        listing = get_object_or_404(Listings, pk=listing_id)
+        if listing.is_active:
+            new_bid = float(request.POST['up_bid'])
+            if new_bid > listing.price:
+                bid = Bids(bid_amount = new_bid, bidder = request.user, listing = listing)
+                bid.save()
+                listing.price = new_bid
+                listing.save()
+            else:
+                error(request, "Your bid must be higher than the current price.")
+    return HttpResponseRedirect(reverse("listing", args=[listing_id]))
 
 
 def add_comment(request, listing_id):
@@ -184,7 +191,7 @@ def add_comment(request, listing_id):
         listing = get_object_or_404(Listings, pk=listing_id)
         if listing.is_active:
             comment_instance = request.POST["content"]
-            comment = Comments(user = request.user, content = comment_instance, listing = listing, publication_date = datetime.datetime.now().time())
+            comment = Comments(user = request.user, content = comment_instance, listing = listing)
             comment.save()
     return HttpResponseRedirect(reverse("listing", args=[listing.id]))
     
