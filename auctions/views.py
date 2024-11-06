@@ -153,8 +153,9 @@ def remove_from_watchlist(request, listing_id):
 def user_profile(request):
     """ A page to see everything associated with that user e.g. listings, watchlist etc."""
     user = request.user
-    items = user.owner.all()
-    return render(request, "auctions/user_profile.html", {"user": user, "items": items})
+    items = user.owner.filter(is_active=False)
+    sales = user.owner.filter(is_active=True)
+    return render(request, "auctions/user_profile.html", {"user": user, "items": items, "sales": sales})
 
 def closed_listing(request, listing_id):
     """Page that appears after seller closes listing or listing ends naturally."""
